@@ -1,0 +1,29 @@
+{
+  "name": "actjs",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "example": "vite --root examples/basic"
+  },
+  "keywords": [],
+  "author": "toddpastell",
+  "license": "MIT",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.5.1",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.5.1",
+  "type": "module",
+  "devDependencies": {
+    "pixi.js": "^8.21.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  },
+  "peerDependencies": {
+    "pixi.js": "^8.21.0"
+  }
+}
