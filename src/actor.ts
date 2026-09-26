@@ -26,6 +26,7 @@ export abstract class Actor<State extends string = string> extends Sprite {
     this.animations = animations;
     this.state = initialState;
 
+    this.anchor.set(0.5);
     this.updateTexture();
   }
 

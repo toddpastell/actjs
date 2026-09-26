@@ -8,15 +8,16 @@ export interface LabelOptions {
 }
 
 export class Label extends BitmapText {
-  constructor(text: string, options: LabelOptions = {}) {
+  constructor(text: string, { x, y, fill = 0xffffff }: LabelOptions = {}) {
     super({
       text,
+      x,
+      y,
       style: {
         fontFamily: MONOGRAM,
         fontSize: MONOGRAM_SIZE,
-        fill: options.fill ?? 0xffffff,
+        fill,
       },
     });
-    this.position.set(options.x ?? 0, options.y ?? 0);
   }
 }

@@ -13,8 +13,6 @@ class Player extends Actor<"idle" | "walk"> {
       },
       "idle",
     );
-
-    this.anchor.set(0.5);
   }
 
   move(x: number, y: number, deltaMS: number): void {
