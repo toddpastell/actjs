@@ -15,33 +15,27 @@ class Player extends Actor<"idle" | "walk"> {
     );
   }
 
-  move(x: number, y: number, deltaMS: number): void {
-    this.x += x * SPEED * deltaMS;
-    this.y += y * SPEED * deltaMS;
+  update(deltaMS: number): void {
+    const { input } = this.game;
 
-    if (x !== 0) this.scale.x = x;
+    this.x += input.x * SPEED * deltaMS;
+    this.y += input.y * SPEED * deltaMS;
 
-    this.play(x || y ? "walk" : "idle");
+    if (input.x !== 0) this.scale.x = input.x;
+
+    this.play(input.x || input.y ? "walk" : "idle");
   }
 }
 
 class Example extends Scene {
-  private player!: Player;
-
   init(): void {
     const { width, height } = this.game.app.screen;
+    const player = new Player();
 
-    this.player = new Player();
-    this.player.position.set(width / 2, height / 2);
-    this.addChild(this.player);
+    player.position.set(width / 2, height / 2);
+    this.addChild(player);
 
     this.addChild(new Label("hello, mouse!", { x: 4, y: 2 }));
-  }
-
-  update(deltaMS: number): void {
-    const { input } = this.game;
-
-    this.player.move(input.x, input.y, deltaMS);
   }
 }
 

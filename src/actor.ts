@@ -1,4 +1,6 @@
 import { Sprite } from "pixi.js";
+import type { Game } from "./game";
+import type { Scene } from "./scene";
 import { Sheet } from "./sheet";
 
 export type Animation = {
@@ -30,6 +32,12 @@ export abstract class Actor<State extends string = string> extends Sprite {
     this.updateTexture();
   }
 
+  get game(): Game {
+    return (this.parent as Scene).game;
+  }
+
+  update(_deltaMS: number): void {}
+
   play(state: State) {
     if (state === this.state) return;
 
@@ -40,7 +48,7 @@ export abstract class Actor<State extends string = string> extends Sprite {
     this.updateTexture();
   }
 
-  update(deltaMS: number) {
+  animate(deltaMS: number) {
     const animation = this.animations[this.state];
     const speed = animation.speed ?? 100;
 

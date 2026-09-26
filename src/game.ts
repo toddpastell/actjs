@@ -81,7 +81,10 @@ export class Game {
     this.current.update(ticker.deltaMS);
 
     for (const child of this.current.children) {
-      if (child instanceof Actor) child.update(ticker.deltaMS);
+      if (!(child instanceof Actor)) continue;
+
+      child.update(ticker.deltaMS);
+      child.animate(ticker.deltaMS);
     }
   };
 
