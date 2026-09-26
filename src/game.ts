@@ -1,4 +1,10 @@
-import { Application, Assets, TextureStyle, Ticker } from "pixi.js";
+import {
+  Application,
+  Assets,
+  TextureStyle,
+  Ticker,
+  type ColorSource,
+} from "pixi.js";
 import { Actor } from "./actor";
 import { loadMonogram } from "./font";
 import { Input } from "./input";
@@ -7,6 +13,7 @@ import { Scene } from "./scene";
 export interface GameOptions {
   width?: number;
   height?: number;
+  background?: ColorSource;
   assets?: string[];
 }
 
@@ -19,6 +26,7 @@ export class Game {
   async init({
     width = 160,
     height = 144,
+    background,
     assets = [],
   }: GameOptions = {}): Promise<void> {
     TextureStyle.defaultOptions.scaleMode = "nearest";
@@ -26,6 +34,7 @@ export class Game {
     await this.app.init({
       width,
       height,
+      background,
       antialias: false,
       roundPixels: true,
     });

@@ -1,4 +1,5 @@
 export { Actor, type Animation } from "./actor";
+export { collide, type Side } from "./collision";
 export { MONOGRAM, MONOGRAM_SIZE } from "./font";
 export { Game, type GameOptions } from "./game";
 export { Input, type Control } from "./input";

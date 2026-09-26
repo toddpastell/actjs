@@ -8,7 +8,11 @@ export interface LabelOptions {
 }
 
 export class Label extends BitmapText {
-  constructor(text: string, { x, y, fill = 0xffffff }: LabelOptions = {}) {
+  static defaultOptions: LabelOptions = { fill: 0xffffff };
+
+  constructor(text: string, options: LabelOptions = {}) {
+    const { x, y, fill } = { ...Label.defaultOptions, ...options };
+
     super({
       text,
       x,

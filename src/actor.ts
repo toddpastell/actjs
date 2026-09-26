@@ -1,4 +1,4 @@
-import { Sprite } from "pixi.js";
+import { Rectangle, Sprite } from "pixi.js";
 import type { Game } from "./game";
 import type { Scene } from "./scene";
 import { Sheet } from "./sheet";
@@ -14,6 +14,7 @@ export abstract class Actor<State extends string = string> extends Sprite {
 
   state: State;
   frame = 0;
+  body: Rectangle;
 
   private elapsed = 0;
 
@@ -27,13 +28,23 @@ export abstract class Actor<State extends string = string> extends Sprite {
     this.sheet = sheet;
     this.animations = animations;
     this.state = initialState;
+    this.body = new Rectangle(
+      -sheet.cellWidth / 2,
+      -sheet.cellHeight / 2,
+      sheet.cellWidth,
+      sheet.cellHeight,
+    );
 
     this.anchor.set(0.5);
     this.updateTexture();
   }
 
+  get scene(): Scene {
+    return this.parent as Scene;
+  }
+
   get game(): Game {
-    return (this.parent as Scene).game;
+    return this.scene.game;
   }
 
   update(_deltaMS: number): void {}
