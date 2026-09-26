@@ -8,5 +8,5 @@ export abstract class Scene extends Container {
 
   deinit(): void {}
 
-  update(deltaMS: number): void {}
+  update(_deltaMS: number): void {}
 }

@@ -1,35 +1,36 @@
-import { Application, TextureStyle, Ticker } from "pixi.js";
+import { Application, Assets, TextureStyle, Ticker } from "pixi.js";
 import { Input } from "./input";
 import { Scene } from "./scene";
 
 export interface GameOptions {
   width?: number;
   height?: number;
+  assets?: string[];
 }
 
 export class Game {
   readonly app = new Application();
   readonly input = new Input();
 
-  private readonly width: number;
-  private readonly height: number;
   private current: Scene | null = null;
 
-  constructor({ width = 320, height = 180 }: GameOptions = {}) {
-    this.width = width;
-    this.height = height;
-  }
-
-  async init(): Promise<void> {
+  async init({
+    width = 160,
+    height = 144,
+    assets = [],
+  }: GameOptions = {}): Promise<void> {
     TextureStyle.defaultOptions.scaleMode = "nearest";
 
     await this.app.init({
-      width: this.width,
-      height: this.height,
+      width,
+      height,
       antialias: false,
     });
 
     document.body.appendChild(this.app.canvas);
+
+    await Assets.load(assets);
+    // todo load font
 
     this.app.ticker.add(this.tick);
     this.input.init();
@@ -75,16 +76,14 @@ export class Game {
   };
 
   private onResize = (): void => {
+    const { width, height } = this.app.screen;
     const scale = Math.max(
       1,
       Math.floor(
-        Math.min(
-          window.innerWidth / this.width,
-          window.innerHeight / this.height,
-        ),
+        Math.min(window.innerWidth / width, window.innerHeight / height),
       ),
     );
-    this.app.canvas.style.width = `${this.width * scale}px`;
-    this.app.canvas.style.height = `${this.height * scale}px`;
+    this.app.canvas.style.width = `${width * scale}px`;
+    this.app.canvas.style.height = `${height * scale}px`;
   };
 }

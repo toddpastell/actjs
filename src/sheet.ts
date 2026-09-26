@@ -1,6 +1,23 @@
-import { Rectangle, Texture } from "pixi.js";
+import { Assets, Rectangle, Texture } from "pixi.js";
 
 export class Sheet {
+  private static readonly cache = new Map<string, Sheet>();
+
+  static get(url: string, cellWidth: number, cellHeight = cellWidth): Sheet {
+    const key = `${url}:${cellWidth}x${cellHeight}`;
+    let sheet = Sheet.cache.get(key);
+
+    if (!sheet) {
+      const texture = Assets.get<Texture>(url);
+      if (!texture) throw new Error("Asset not loaded");
+
+      sheet = new Sheet(texture, cellWidth, cellHeight);
+      Sheet.cache.set(key, sheet);
+    }
+
+    return sheet;
+  }
+
   readonly texture: Texture;
   readonly cellWidth: number;
   readonly cellHeight: number;

@@ -18,7 +18,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Examples import the engine by package name */
+    "paths": {
+      "actjs": ["./src/index.ts"],
+    },
   },
-  "include": ["src"]
+  "include": ["src", "examples"],
 }
