@@ -1,4 +1,4 @@
-import { Actor, Game, Scene, Sheet } from "actjs";
+import { Actor, Game, Label, Scene, Sheet } from "actjs";
 import mouseUrl from "./mouse.png";
 
 const SPEED = 0.05;
@@ -6,7 +6,7 @@ const SPEED = 0.05;
 class Player extends Actor<"idle" | "walk"> {
   constructor() {
     super(
-      Sheet.get(mouseUrl, 8),
+      Sheet.from(mouseUrl, 8),
       {
         idle: { frames: [0, 1], speed: 400 },
         walk: { frames: [5, 6, 7, 8, 9] },
@@ -24,7 +24,6 @@ class Player extends Actor<"idle" | "walk"> {
     if (x !== 0) this.scale.x = x;
 
     this.play(x || y ? "walk" : "idle");
-    this.update(deltaMS);
   }
 }
 
@@ -37,6 +36,8 @@ class Example extends Scene {
     this.player = new Player();
     this.player.position.set(width / 2, height / 2);
     this.addChild(this.player);
+
+    this.addChild(new Label("hello, mouse!", { x: 4, y: 2 }));
   }
 
   update(deltaMS: number): void {

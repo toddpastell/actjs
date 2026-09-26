@@ -3,7 +3,7 @@ import { Assets, Rectangle, Texture } from "pixi.js";
 export class Sheet {
   private static readonly cache = new Map<string, Sheet>();
 
-  static get(url: string, cellWidth: number, cellHeight = cellWidth): Sheet {
+  static from(url: string, cellWidth: number, cellHeight = cellWidth): Sheet {
     const key = `${url}:${cellWidth}x${cellHeight}`;
     let sheet = Sheet.cache.get(key);
 

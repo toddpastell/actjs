@@ -1,4 +1,6 @@
 import { Application, Assets, TextureStyle, Ticker } from "pixi.js";
+import { Actor } from "./actor";
+import { loadMonogram } from "./font";
 import { Input } from "./input";
 import { Scene } from "./scene";
 
@@ -25,12 +27,13 @@ export class Game {
       width,
       height,
       antialias: false,
+      roundPixels: true,
     });
 
     document.body.appendChild(this.app.canvas);
 
     await Assets.load(assets);
-    // todo load font
+    await loadMonogram();
 
     this.app.ticker.add(this.tick);
     this.input.init();
@@ -72,7 +75,14 @@ export class Game {
 
   private tick = (ticker: Ticker): void => {
     this.input.poll();
-    this.current?.update(ticker.deltaMS);
+
+    if (!this.current) return;
+
+    this.current.update(ticker.deltaMS);
+
+    for (const child of this.current.children) {
+      if (child instanceof Actor) child.update(ticker.deltaMS);
+    }
   };
 
   private onResize = (): void => {
