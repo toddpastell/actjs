@@ -1,6 +1,6 @@
 import type { Actor } from "./actor";
 
-export type Side = "left" | "right" | "up" | "down";
+export type Side = "left" | "right" | "top" | "bottom";
 
 export function collide(solid: Actor, mover: Actor): Side | null {
   const s = solid.body;
@@ -27,9 +27,9 @@ export function collide(solid: Actor, mover: Actor): Side | null {
 
   if (min === up) {
     mover.y += up;
-    return "up";
+    return "top";
   }
 
   mover.y -= down;
-  return "down";
+  return "bottom";
 }

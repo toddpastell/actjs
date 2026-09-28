@@ -17,6 +17,8 @@ export class Timers {
   }
 
   update(deltaMS: number): void {
+    if (this.timers.size === 0) return;
+
     for (const timer of this.timers) {
       timer.remaining -= deltaMS;
 

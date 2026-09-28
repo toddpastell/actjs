@@ -1,7 +1,8 @@
-import { Rectangle, Sprite } from "pixi.js";
+import { Entity } from "./entity";
 import type { Game } from "./game";
-import { Scene } from "./scene";
-import { Sheet } from "./sheet";
+import { Rect } from "./rect";
+import type { Renderer } from "./renderer";
+import type { Sheet } from "./sheet";
 import { Timers } from "./timers";
 
 export type Animation = {
@@ -9,13 +10,14 @@ export type Animation = {
   speed?: number;
 };
 
-export abstract class Actor<State extends string = string> extends Sprite {
+export abstract class Actor<State extends string = string> extends Entity {
   protected readonly sheet: Sheet;
   protected readonly animations: Record<State, Animation>;
 
   state: State;
   frame = 0;
-  body: Rectangle;
+  flip = false;
+  body: Rect;
 
   readonly timers = new Timers();
 
@@ -31,28 +33,17 @@ export abstract class Actor<State extends string = string> extends Sprite {
     this.sheet = sheet;
     this.animations = animations;
     this.state = initialState;
-    this.body = new Rectangle(
+    this.body = new Rect(
       -sheet.cellWidth / 2,
       -sheet.cellHeight / 2,
       sheet.cellWidth,
       sheet.cellHeight,
     );
-
-    this.anchor.set(0.5);
-    this.updateTexture();
-  }
-
-  get scene(): Scene {
-    let node = this.parent;
-    while (!(node instanceof Scene)) node = node!.parent;
-    return node;
   }
 
   get game(): Game {
     return this.scene.game;
   }
-
-  update(_deltaMS: number): void {}
 
   play(state: State) {
     if (state === this.state) return;
@@ -60,8 +51,6 @@ export abstract class Actor<State extends string = string> extends Sprite {
     this.state = state;
     this.frame = 0;
     this.elapsed = 0;
-
-    this.updateTexture();
   }
 
   animate(deltaMS: number) {
@@ -74,12 +63,17 @@ export abstract class Actor<State extends string = string> extends Sprite {
 
     this.elapsed -= speed;
     this.frame = (this.frame + 1) % animation.frames.length;
-
-    this.updateTexture();
   }
 
-  private updateTexture() {
-    const animation = this.animations[this.state];
-    this.texture = this.sheet.cell(animation.frames[this.frame]);
+  draw(renderer: Renderer, cameraX: number, cameraY: number): void {
+    const { cellWidth, cellHeight } = this.sheet;
+
+    renderer.draw(
+      this.sheet,
+      this.animations[this.state].frames[this.frame],
+      this.x - cellWidth / 2 - cameraX,
+      this.y - cellHeight / 2 - cameraY,
+      this.flip,
+    );
   }
 }

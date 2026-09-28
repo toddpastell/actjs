@@ -1,50 +1,58 @@
-import { Container, Sprite } from "pixi.js";
 import type { Actor } from "./actor";
+import { Entity } from "./entity";
+import type { Renderer } from "./renderer";
 import type { Sheet } from "./sheet";
 
 export interface TilemapOptions {
-  tiles: Record<string, number>;
+  legend: Record<string, number>;
   solid?: string;
 }
 
-export class Tilemap extends Container {
+export class Tilemap extends Entity {
   readonly sheet: Sheet;
-  readonly rows: string[];
+  readonly map: string[];
+  readonly columns: number;
+  readonly rows: number;
 
   private readonly solid: string;
+  private readonly cells: Int16Array;
 
   constructor(
     sheet: Sheet,
-    rows: string[],
-    { tiles, solid = "" }: TilemapOptions,
+    map: string[],
+    { legend, solid = "" }: TilemapOptions,
   ) {
     super();
 
     this.sheet = sheet;
-    this.rows = rows;
+    this.map = map;
     this.solid = solid;
+    this.columns = map[0].length;
+    this.rows = map.length;
+    this.cells = new Int16Array(this.columns * this.rows).fill(-1);
 
-    for (let row = 0; row < rows.length; row++) {
-      for (let column = 0; column < rows[row].length; column++) {
-        const index = tiles[rows[row][column]];
-        if (index === undefined) continue;
-
-        this.addChild(
-          new Sprite({
-            texture: sheet.cell(index),
-            x: column * sheet.cellWidth,
-            y: row * sheet.cellHeight,
-          }),
-        );
+    for (let row = 0; row < this.rows; row++) {
+      for (let column = 0; column < this.columns; column++) {
+        const index = legend[map[row][column]];
+        if (index !== undefined)
+          this.cells[row * this.columns + column] = index;
       }
     }
+  }
+
+  get width(): number {
+    return this.columns * this.sheet.cellWidth;
+  }
+
+  get height(): number {
+    return this.rows * this.sheet.cellHeight;
   }
 
   at(x: number, y: number): string | undefined {
     const column = Math.floor(x / this.sheet.cellWidth);
     const row = Math.floor(y / this.sheet.cellHeight);
 
-    return this.rows[row]?.[column];
+    return this.map[row]?.[column];
   }
 
   touches({ x, y, body }: Actor, chars: string): boolean {
@@ -57,7 +65,7 @@ export class Tilemap extends Container {
 
     for (let row = top; row < bottom; row++) {
       for (let column = left; column < right; column++) {
-        const char = this.rows[row]?.[column];
+        const char = this.map[row]?.[column];
         if (char !== undefined && chars.includes(char)) return true;
       }
     }
@@ -66,25 +74,60 @@ export class Tilemap extends Container {
   }
 
   move(actor: Actor, dx: number, dy: number): void {
-    const { body } = actor;
-    const { cellWidth, cellHeight } = this.sheet;
+    this.moveX(actor, dx);
+    this.moveY(actor, dy);
+  }
+
+  moveX(actor: Actor, dx: number): boolean {
+    const { cellWidth } = this.sheet;
 
     actor.x += dx;
 
-    if (dx !== 0 && this.touches(actor, this.solid)) {
-      const edge = actor.x + (dx > 0 ? body.right : body.left);
-      const snap = dx > 0 ? Math.floor : Math.ceil;
+    if (dx === 0 || !this.touches(actor, this.solid)) return false;
 
-      actor.x += snap(edge / cellWidth) * cellWidth - edge;
-    }
+    const edge = actor.x + (dx > 0 ? actor.body.right : actor.body.left);
+    const snap = dx > 0 ? Math.floor : Math.ceil;
+
+    actor.x += snap(edge / cellWidth) * cellWidth - edge;
+    return true;
+  }
+
+  moveY(actor: Actor, dy: number): boolean {
+    const { cellHeight } = this.sheet;
 
     actor.y += dy;
 
-    if (dy !== 0 && this.touches(actor, this.solid)) {
-      const edge = actor.y + (dy > 0 ? body.bottom : body.top);
-      const snap = dy > 0 ? Math.floor : Math.ceil;
+    if (dy === 0 || !this.touches(actor, this.solid)) return false;
 
-      actor.y += snap(edge / cellHeight) * cellHeight - edge;
+    const edge = actor.y + (dy > 0 ? actor.body.bottom : actor.body.top);
+    const snap = dy > 0 ? Math.floor : Math.ceil;
+
+    actor.y += snap(edge / cellHeight) * cellHeight - edge;
+    return true;
+  }
+
+  draw(renderer: Renderer, cameraX: number, cameraY: number): void {
+    const { sheet, cells, columns, rows } = this;
+    const { cellWidth, cellHeight } = sheet;
+    const { width, height } = this.scene.game;
+
+    const left = Math.max(0, Math.floor(cameraX / cellWidth));
+    const right = Math.min(columns, Math.ceil((cameraX + width) / cellWidth));
+    const top = Math.max(0, Math.floor(cameraY / cellHeight));
+    const bottom = Math.min(rows, Math.ceil((cameraY + height) / cellHeight));
+
+    for (let row = top; row < bottom; row++) {
+      for (let column = left; column < right; column++) {
+        const cell = cells[row * columns + column];
+        if (cell < 0) continue;
+
+        renderer.draw(
+          sheet,
+          cell,
+          column * cellWidth - cameraX,
+          row * cellHeight - cameraY,
+        );
+      }
     }
   }
 }

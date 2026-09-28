@@ -14,8 +14,5 @@ export default defineConfig({
       fileName: "index",
     },
     copyPublicDir: false,
-    rolldownOptions: {
-      external: [/^pixi\.js/],
-    },
   },
 });
