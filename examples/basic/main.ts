@@ -56,7 +56,7 @@ class Player extends Actor<"idle" | "walk"> {
 
   update(deltaMS: number): void {
     const { input } = this.game;
-    const [level] = this.scene.all(Tilemap);
+    const level = this.scene.all(Tilemap)[0];
 
     if (this.grounded && input.pressed("a")) this.vy = -JUMP;
     this.vy = Math.min(this.vy + GRAVITY * deltaMS, MAX_FALL);
@@ -71,7 +71,7 @@ class Player extends Actor<"idle" | "walk"> {
     }
 
     for (const statue of this.scene.all(Statue)) {
-      const side = collide(statue, this);
+      const side = collide(statue, this, level);
 
       if (side === "bottom") this.grounded = true;
       if (side === "bottom" || side === "top") this.vy = 0;
@@ -127,8 +127,8 @@ class Example extends Scene {
 
   update(): void {
     const { width, height } = this.game;
-    const [player] = this.all(Player);
-    const [level] = this.all(Tilemap);
+    const player = this.all(Player)[0];
+    const level = this.all(Tilemap)[0];
 
     this.camera.x = Math.max(
       0,

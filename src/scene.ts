@@ -10,6 +10,7 @@ export abstract class Scene {
   readonly timers = new Timers();
 
   private readonly found = new Map<Function, readonly Entity[]>();
+  private readonly pruned: Entity[] = [];
 
   abstract init(): void;
 
@@ -18,7 +19,13 @@ export abstract class Scene {
   update(_deltaMS: number): void {}
 
   add<T extends Entity>(entity: T): T {
+    if (entity.scene === this && this.entities.includes(entity)) {
+      entity.removed = false;
+      return entity;
+    }
+
     entity.scene = this;
+    entity.removed = false;
     this.entities.push(entity);
     this.found.clear();
 
@@ -44,16 +51,28 @@ export abstract class Scene {
   }
 
   prune(): void {
+    const { entities, pruned } = this;
     let kept = 0;
 
-    for (const entity of this.entities) {
-      if (entity.removed) entity.deinit();
-      else this.entities[kept++] = entity;
+    for (const entity of entities) {
+      if (entity.removed) pruned.push(entity);
+      else entities[kept++] = entity;
     }
 
-    if (kept === this.entities.length) return;
+    if (pruned.length === 0) return;
 
-    this.entities.length = kept;
+    entities.length = kept;
     this.found.clear();
+
+    for (const entity of pruned) entity.deinit();
+    pruned.length = 0;
+  }
+
+  reset(): void {
+    this.entities.length = 0;
+    this.found.clear();
+    this.timers.clear();
+    this.camera.x = 0;
+    this.camera.y = 0;
   }
 }

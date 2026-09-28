@@ -2,11 +2,12 @@ interface Timer {
   delay: number;
   remaining: number;
   repeat: boolean;
+  done: boolean;
   callback: () => void;
 }
 
 export class Timers {
-  private readonly timers = new Set<Timer>();
+  private readonly timers: Timer[] = [];
 
   after(delay: number, callback: () => void): () => void {
     return this.add(delay, false, callback);
@@ -16,19 +17,37 @@ export class Timers {
     return this.add(delay, true, callback);
   }
 
-  update(deltaMS: number): void {
-    if (this.timers.size === 0) return;
+  clear(): void {
+    for (const timer of this.timers) timer.done = true;
+  }
 
-    for (const timer of this.timers) {
+  update(deltaMS: number): void {
+    const { timers } = this;
+    const count = timers.length;
+
+    if (count === 0) return;
+
+    for (let i = 0; i < count; i++) {
+      const timer = timers[i];
+      if (timer.done) continue;
+
       timer.remaining -= deltaMS;
 
       if (timer.remaining > 0) continue;
 
       if (timer.repeat) timer.remaining += timer.delay;
-      else this.timers.delete(timer);
+      else timer.done = true;
 
       timer.callback();
     }
+
+    let kept = 0;
+
+    for (let i = 0; i < timers.length; i++) {
+      if (!timers[i].done) timers[kept++] = timers[i];
+    }
+
+    timers.length = kept;
   }
 
   private add(
@@ -36,10 +55,12 @@ export class Timers {
     repeat: boolean,
     callback: () => void,
   ): () => void {
-    const timer = { delay, remaining: delay, repeat, callback };
+    const timer = { delay, remaining: delay, repeat, done: false, callback };
 
-    this.timers.add(timer);
+    this.timers.push(timer);
 
-    return () => this.timers.delete(timer);
+    return () => {
+      timer.done = true;
+    };
   }
 }

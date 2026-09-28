@@ -25,20 +25,14 @@ export class Label extends Entity {
   constructor(text: string, options: LabelOptions = {}) {
     super();
 
-    const {
-      x = 0,
-      y = 0,
-      fill = 0xffffff,
-      layer = 0,
-      fixed = false,
-    } = { ...Label.defaultOptions, ...options };
+    const defaults = new.target.defaultOptions;
 
     this.text = text;
-    this.fill = fill;
-    this.x = x;
-    this.y = y;
-    this.layer = layer;
-    this.fixed = fixed;
+    this.fill = options.fill ?? defaults.fill ?? 0xffffff;
+    this.x = options.x ?? defaults.x ?? this.x;
+    this.y = options.y ?? defaults.y ?? this.y;
+    this.layer = options.layer ?? defaults.layer ?? this.layer;
+    this.fixed = options.fixed ?? defaults.fixed ?? this.fixed;
   }
 
   draw(renderer: Renderer, cameraX: number, cameraY: number): void {

@@ -130,16 +130,14 @@ export class Renderer {
       this.quads = 0;
     }
 
-    const { image, cellWidth, cellHeight, columns } = sheet;
-    const sx = (cell % columns) * cellWidth;
-    const sy = Math.floor(cell / columns) * cellHeight;
+    const { cellWidth, cellHeight, columns, uvWidth, uvHeight } = sheet;
 
-    const left = sx / image.width;
-    const right = (sx + cellWidth) / image.width;
+    const left = (cell % columns) * uvWidth;
+    const right = left + uvWidth;
     const u0 = flip ? right : left;
     const u1 = flip ? left : right;
-    const v0 = sy / image.height;
-    const v1 = (sy + cellHeight) / image.height;
+    const v0 = Math.floor(cell / columns) * uvHeight;
+    const v1 = v0 + uvHeight;
 
     const x0 = Math.round(x);
     const y0 = Math.round(y);

@@ -6,6 +6,7 @@ export async function load(urls: string[]): Promise<void> {
       if (images.has(url)) return;
 
       const image = new Image();
+      image.crossOrigin = "anonymous";
       image.src = url;
       await image.decode();
 

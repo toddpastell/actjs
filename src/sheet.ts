@@ -10,6 +10,8 @@ export class Sheet {
   readonly cellHeight: number;
   readonly columns: number;
   readonly rows: number;
+  readonly uvWidth: number;
+  readonly uvHeight: number;
 
   constructor(
     image: HTMLImageElement,
@@ -22,5 +24,7 @@ export class Sheet {
 
     this.columns = Math.floor(image.width / cellWidth);
     this.rows = Math.floor(image.height / cellHeight);
+    this.uvWidth = cellWidth / image.width;
+    this.uvHeight = cellHeight / image.height;
   }
 }

@@ -19,13 +19,15 @@ const BITS = Object.fromEntries(
 ) as Record<Control, number>;
 
 const BY_CODE = new Map<string, number>(
-  CONTROLS.flatMap((control) =>
-    KEYS[control].map((code) => [code, BITS[control]] as const),
-  ),
+  CONTROLS.flatMap((control) => KEYS[control]).map((code, i) => [code, 1 << i]),
+);
+
+const MASKS = CONTROLS.map((control) =>
+  KEYS[control].reduce((mask, code) => mask | BY_CODE.get(code)!, 0),
 );
 
 export class Input {
-  private down = 0;
+  private keys = 0;
   private current = 0;
   private previous = 0;
 
@@ -66,30 +68,37 @@ export class Input {
   }
 
   poll(): void {
+    let current = 0;
+
+    for (let i = 0; i < MASKS.length; i++) {
+      if (this.keys & MASKS[i]) current |= 1 << i;
+    }
+
     this.previous = this.current;
-    this.current = this.down;
+    this.current = current;
   }
 
   private onKeyDown = (event: KeyboardEvent): void => {
+    if (event.metaKey) return this.onBlur();
+    if (event.ctrlKey || event.altKey || typing(event.target)) return;
+
     const bit = BY_CODE.get(event.code);
     if (!bit) return;
 
     event.preventDefault();
 
-    this.down |= bit;
+    this.keys |= bit;
   };
 
   private onKeyUp = (event: KeyboardEvent): void => {
     const bit = BY_CODE.get(event.code);
     if (!bit) return;
 
-    event.preventDefault();
-
-    this.down &= ~bit;
+    this.keys &= ~bit;
   };
 
   private onBlur = (): void => {
-    this.down = 0;
+    this.keys = 0;
     this.current = 0;
     this.previous = 0;
   };
@@ -98,4 +107,14 @@ export class Input {
     if (!document.hidden) return;
     this.onBlur();
   };
+}
+
+function typing(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.tagName === "SELECT")
+  );
 }

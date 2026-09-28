@@ -79,31 +79,23 @@ export class Tilemap extends Entity {
   }
 
   moveX(actor: Actor, dx: number): boolean {
-    const { cellWidth } = this.sheet;
+    const steps = Math.floor(Math.abs(dx) / this.sheet.cellWidth) + 1;
 
-    actor.x += dx;
+    for (let i = 0; i < steps; i++) {
+      if (this.stepX(actor, dx / steps)) return true;
+    }
 
-    if (dx === 0 || !this.touches(actor, this.solid)) return false;
-
-    const edge = actor.x + (dx > 0 ? actor.body.right : actor.body.left);
-    const snap = dx > 0 ? Math.floor : Math.ceil;
-
-    actor.x += snap(edge / cellWidth) * cellWidth - edge;
-    return true;
+    return false;
   }
 
   moveY(actor: Actor, dy: number): boolean {
-    const { cellHeight } = this.sheet;
+    const steps = Math.floor(Math.abs(dy) / this.sheet.cellHeight) + 1;
 
-    actor.y += dy;
+    for (let i = 0; i < steps; i++) {
+      if (this.stepY(actor, dy / steps)) return true;
+    }
 
-    if (dy === 0 || !this.touches(actor, this.solid)) return false;
-
-    const edge = actor.y + (dy > 0 ? actor.body.bottom : actor.body.top);
-    const snap = dy > 0 ? Math.floor : Math.ceil;
-
-    actor.y += snap(edge / cellHeight) * cellHeight - edge;
-    return true;
+    return false;
   }
 
   draw(renderer: Renderer, cameraX: number, cameraY: number): void {
@@ -129,5 +121,33 @@ export class Tilemap extends Entity {
         );
       }
     }
+  }
+
+  private stepX(actor: Actor, dx: number): boolean {
+    const { cellWidth } = this.sheet;
+
+    actor.x += dx;
+
+    if (dx === 0 || !this.touches(actor, this.solid)) return false;
+
+    const edge = actor.x + (dx > 0 ? actor.body.right : actor.body.left);
+    const snap = dx > 0 ? Math.floor : Math.ceil;
+
+    actor.x += snap(edge / cellWidth) * cellWidth - edge;
+    return true;
+  }
+
+  private stepY(actor: Actor, dy: number): boolean {
+    const { cellHeight } = this.sheet;
+
+    actor.y += dy;
+
+    if (dy === 0 || !this.touches(actor, this.solid)) return false;
+
+    const edge = actor.y + (dy > 0 ? actor.body.bottom : actor.body.top);
+    const snap = dy > 0 ? Math.floor : Math.ceil;
+
+    actor.y += snap(edge / cellHeight) * cellHeight - edge;
+    return true;
   }
 }
