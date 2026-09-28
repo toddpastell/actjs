@@ -1,4 +1,4 @@
-# actjs
+# actJS
 
 A tiny, easy-to-use pixel game engine built on [PixiJS](https://pixijs.com).
 

@@ -6,3 +6,5 @@ export { Input, type Control } from "./input";
 export { Label, type LabelOptions } from "./label";
 export { Scene } from "./scene";
 export { Sheet } from "./sheet";
+export { Tilemap, type TilemapOptions } from "./tilemap";
+export { Timers } from "./timers";

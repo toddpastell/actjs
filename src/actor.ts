@@ -1,7 +1,8 @@
 import { Rectangle, Sprite } from "pixi.js";
 import type { Game } from "./game";
-import type { Scene } from "./scene";
+import { Scene } from "./scene";
 import { Sheet } from "./sheet";
+import { Timers } from "./timers";
 
 export type Animation = {
   frames: number[];
@@ -15,6 +16,8 @@ export abstract class Actor<State extends string = string> extends Sprite {
   state: State;
   frame = 0;
   body: Rectangle;
+
+  readonly timers = new Timers();
 
   private elapsed = 0;
 
@@ -40,7 +43,9 @@ export abstract class Actor<State extends string = string> extends Sprite {
   }
 
   get scene(): Scene {
-    return this.parent as Scene;
+    let node = this.parent;
+    while (!(node instanceof Scene)) node = node!.parent;
+    return node;
   }
 
   get game(): Game {

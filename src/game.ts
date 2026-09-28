@@ -87,13 +87,15 @@ export class Game {
 
     if (!this.current) return;
 
+    this.current.timers.update(ticker.deltaMS);
     this.current.update(ticker.deltaMS);
 
-    for (const child of this.current.children) {
-      if (!(child instanceof Actor)) continue;
+    for (const actor of this.current.all(Actor)) {
+      if (!actor.parent) continue;
 
-      child.update(ticker.deltaMS);
-      child.animate(ticker.deltaMS);
+      actor.timers.update(ticker.deltaMS);
+      actor.update(ticker.deltaMS);
+      actor.animate(ticker.deltaMS);
     }
   };
 
