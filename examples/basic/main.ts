@@ -114,11 +114,11 @@ class Example extends Scene {
       new Label("hello, mouse!", { x: 12, y: 8, layer: 2, fixed: true }),
     );
 
-    const stop = this.timers.every(250, () => {
+    const stop = label.timers.every(250, () => {
       label.visible = !label.visible;
     });
 
-    this.timers.after(3000, () => {
+    label.timers.after(3000, () => {
       stop();
       label.visible = true;
       label.text = "go explore!";

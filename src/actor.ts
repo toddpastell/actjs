@@ -1,9 +1,7 @@
 import { Entity } from "./entity";
-import type { Game } from "./game";
 import { Rect } from "./rect";
 import type { Renderer } from "./renderer";
 import type { Sheet } from "./sheet";
-import { Timers } from "./timers";
 
 export type Animation = {
   frames: number[];
@@ -18,8 +16,6 @@ export abstract class Actor<State extends string = string> extends Entity {
   frame = 0;
   flip = false;
   body: Rect;
-
-  readonly timers = new Timers();
 
   private elapsed = 0;
 
@@ -39,10 +35,6 @@ export abstract class Actor<State extends string = string> extends Entity {
       sheet.cellWidth,
       sheet.cellHeight,
     );
-  }
-
-  get game(): Game {
-    return this.scene.game;
   }
 
   play(state: State) {

@@ -1,5 +1,7 @@
+import type { Game } from "./game";
 import type { Renderer } from "./renderer";
 import type { Scene } from "./scene";
+import { Timers } from "./timers";
 
 export abstract class Entity {
   scene!: Scene;
@@ -10,6 +12,12 @@ export abstract class Entity {
   fixed = false;
   visible = true;
   removed = false;
+
+  readonly timers = new Timers();
+
+  get game(): Game {
+    return this.scene.game;
+  }
 
   init(): void {}
 

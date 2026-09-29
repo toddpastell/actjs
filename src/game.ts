@@ -133,13 +133,10 @@ export class Game {
       const entity = entities[i];
       if (entity.removed) continue;
 
-      if (entity instanceof Actor) {
-        entity.timers.update(deltaMS);
-        entity.update(deltaMS);
-        entity.animate(deltaMS);
-      } else {
-        entity.update(deltaMS);
-      }
+      entity.timers.update(deltaMS);
+      entity.update(deltaMS);
+
+      if (entity instanceof Actor) entity.animate(deltaMS);
     }
 
     scene.timers.update(deltaMS);

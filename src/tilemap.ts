@@ -101,7 +101,7 @@ export class Tilemap extends Entity {
   draw(renderer: Renderer, cameraX: number, cameraY: number): void {
     const { sheet, cells, columns, rows } = this;
     const { cellWidth, cellHeight } = sheet;
-    const { width, height } = this.scene.game;
+    const { width, height } = this.game;
 
     const left = Math.max(0, Math.floor(cameraX / cellWidth));
     const right = Math.min(columns, Math.ceil((cameraX + width) / cellWidth));
