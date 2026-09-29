@@ -1,4 +1,3 @@
-export { Actor, type Animation } from "./actor";
 export { collide, type Side } from "./collision";
 export { Entity } from "./entity";
 export { Game, type GameOptions } from "./game";
@@ -8,5 +7,6 @@ export { Rect } from "./rect";
 export { Renderer } from "./renderer";
 export { Scene } from "./scene";
 export { Sheet } from "./sheet";
+export { Sprite, type Animation } from "./sprite";
 export { Tilemap, type TilemapOptions } from "./tilemap";
 export { Timers } from "./timers";

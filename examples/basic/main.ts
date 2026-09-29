@@ -1,4 +1,4 @@
-import { Actor, collide, Game, Label, Scene, Sheet, Tilemap } from "actjs";
+import { collide, Game, Label, Scene, Sheet, Sprite, Tilemap } from "actjs";
 import mouseUrl from "./mouse.png";
 import worldUrl from "./world.png";
 
@@ -39,7 +39,7 @@ const LEVEL = [
   "################################",
 ];
 
-class Player extends Actor<"idle" | "walk"> {
+class Player extends Sprite<"idle" | "walk"> {
   vy = 0;
   grounded = false;
 
@@ -83,7 +83,7 @@ class Player extends Actor<"idle" | "walk"> {
   }
 }
 
-class Statue extends Actor<"idle"> {
+class Statue extends Sprite<"idle"> {
   constructor() {
     super(Sheet.from(mouseUrl, 8), { idle: { frames: [0] } }, "idle");
   }

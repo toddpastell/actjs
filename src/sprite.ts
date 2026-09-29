@@ -8,7 +8,7 @@ export type Animation = {
   speed?: number;
 };
 
-export abstract class Actor<State extends string = string> extends Entity {
+export abstract class Sprite<State extends string = string> extends Entity {
   protected readonly sheet: Sheet;
   protected readonly animations: Record<State, Animation>;
 

@@ -1,10 +1,10 @@
-import { Actor } from "./actor";
 import { load } from "./assets";
 import type { Entity } from "./entity";
 import { Input } from "./input";
 import monogramUrl from "./monogram.png";
 import { Renderer } from "./renderer";
 import type { Scene } from "./scene";
+import { Sprite } from "./sprite";
 
 export interface GameOptions {
   width?: number;
@@ -136,7 +136,7 @@ export class Game {
       entity.timers.update(deltaMS);
       entity.update(deltaMS);
 
-      if (entity instanceof Actor) entity.animate(deltaMS);
+      if (entity instanceof Sprite) entity.animate(deltaMS);
     }
 
     scene.timers.update(deltaMS);

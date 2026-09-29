@@ -1,11 +1,11 @@
-import type { Actor } from "./actor";
+import type { Sprite } from "./sprite";
 import type { Tilemap } from "./tilemap";
 
 export type Side = "left" | "right" | "top" | "bottom";
 
 export function collide(
-  solid: Actor,
-  mover: Actor,
+  solid: Sprite,
+  mover: Sprite,
   level?: Tilemap,
 ): Side | null {
   if (solid === mover) return null;
@@ -41,12 +41,12 @@ export function collide(
   return "bottom";
 }
 
-function push(actor: Actor, dx: number, dy: number, level?: Tilemap): void {
+function push(sprite: Sprite, dx: number, dy: number, level?: Tilemap): void {
   if (level) {
-    level.moveX(actor, dx);
-    level.moveY(actor, dy);
+    level.moveX(sprite, dx);
+    level.moveY(sprite, dy);
   } else {
-    actor.x += dx;
-    actor.y += dy;
+    sprite.x += dx;
+    sprite.y += dy;
   }
 }

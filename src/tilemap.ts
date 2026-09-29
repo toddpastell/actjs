@@ -1,7 +1,7 @@
-import type { Actor } from "./actor";
 import { Entity } from "./entity";
 import type { Renderer } from "./renderer";
 import type { Sheet } from "./sheet";
+import type { Sprite } from "./sprite";
 
 export interface TilemapOptions {
   legend: Record<string, number>;
@@ -55,7 +55,7 @@ export class Tilemap extends Entity {
     return this.map[row]?.[column];
   }
 
-  touches({ x, y, body }: Actor, chars: string): boolean {
+  touches({ x, y, body }: Sprite, chars: string): boolean {
     const { cellWidth, cellHeight } = this.sheet;
 
     const left = Math.floor((x + body.left) / cellWidth);
@@ -73,26 +73,26 @@ export class Tilemap extends Entity {
     return false;
   }
 
-  move(actor: Actor, dx: number, dy: number): void {
-    this.moveX(actor, dx);
-    this.moveY(actor, dy);
+  move(sprite: Sprite, dx: number, dy: number): void {
+    this.moveX(sprite, dx);
+    this.moveY(sprite, dy);
   }
 
-  moveX(actor: Actor, dx: number): boolean {
+  moveX(sprite: Sprite, dx: number): boolean {
     const steps = Math.floor(Math.abs(dx) / this.sheet.cellWidth) + 1;
 
     for (let i = 0; i < steps; i++) {
-      if (this.stepX(actor, dx / steps)) return true;
+      if (this.stepX(sprite, dx / steps)) return true;
     }
 
     return false;
   }
 
-  moveY(actor: Actor, dy: number): boolean {
+  moveY(sprite: Sprite, dy: number): boolean {
     const steps = Math.floor(Math.abs(dy) / this.sheet.cellHeight) + 1;
 
     for (let i = 0; i < steps; i++) {
-      if (this.stepY(actor, dy / steps)) return true;
+      if (this.stepY(sprite, dy / steps)) return true;
     }
 
     return false;
@@ -123,31 +123,31 @@ export class Tilemap extends Entity {
     }
   }
 
-  private stepX(actor: Actor, dx: number): boolean {
+  private stepX(sprite: Sprite, dx: number): boolean {
     const { cellWidth } = this.sheet;
 
-    actor.x += dx;
+    sprite.x += dx;
 
-    if (dx === 0 || !this.touches(actor, this.solid)) return false;
+    if (dx === 0 || !this.touches(sprite, this.solid)) return false;
 
-    const edge = actor.x + (dx > 0 ? actor.body.right : actor.body.left);
+    const edge = sprite.x + (dx > 0 ? sprite.body.right : sprite.body.left);
     const snap = dx > 0 ? Math.floor : Math.ceil;
 
-    actor.x += snap(edge / cellWidth) * cellWidth - edge;
+    sprite.x += snap(edge / cellWidth) * cellWidth - edge;
     return true;
   }
 
-  private stepY(actor: Actor, dy: number): boolean {
+  private stepY(sprite: Sprite, dy: number): boolean {
     const { cellHeight } = this.sheet;
 
-    actor.y += dy;
+    sprite.y += dy;
 
-    if (dy === 0 || !this.touches(actor, this.solid)) return false;
+    if (dy === 0 || !this.touches(sprite, this.solid)) return false;
 
-    const edge = actor.y + (dy > 0 ? actor.body.bottom : actor.body.top);
+    const edge = sprite.y + (dy > 0 ? sprite.body.bottom : sprite.body.top);
     const snap = dy > 0 ? Math.floor : Math.ceil;
 
-    actor.y += snap(edge / cellHeight) * cellHeight - edge;
+    sprite.y += snap(edge / cellHeight) * cellHeight - edge;
     return true;
   }
 }
