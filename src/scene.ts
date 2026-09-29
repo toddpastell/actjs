@@ -21,6 +21,7 @@ export abstract class Scene {
   add<T extends Entity>(entity: T): T {
     if (entity.scene === this && this.entities.includes(entity)) {
       entity.removed = false;
+      this.found.clear();
       return entity;
     }
 
@@ -35,6 +36,7 @@ export abstract class Scene {
 
   remove(entity: Entity): void {
     entity.removed = true;
+    this.found.clear();
   }
 
   all<T extends Entity>(
@@ -43,7 +45,9 @@ export abstract class Scene {
     let entities = this.found.get(type);
 
     if (!entities) {
-      entities = this.entities.filter((entity) => entity instanceof type);
+      entities = this.entities.filter(
+        (entity) => !entity.removed && entity instanceof type,
+      );
       this.found.set(type, entities);
     }
 
