@@ -1,10 +1,12 @@
-export { Actor, type Animation } from "./actor";
 export { collide, type Side } from "./collision";
-export { MONOGRAM, MONOGRAM_SIZE } from "./font";
+export { Entity } from "./entity";
 export { Game, type GameOptions } from "./game";
 export { Input, type Control } from "./input";
 export { Label, type LabelOptions } from "./label";
+export { Rect } from "./rect";
+export { Renderer } from "./renderer";
 export { Scene } from "./scene";
 export { Sheet } from "./sheet";
+export { Sprite, type Animation } from "./sprite";
 export { Tilemap, type TilemapOptions } from "./tilemap";
 export { Timers } from "./timers";

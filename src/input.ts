@@ -9,19 +9,27 @@ const KEYS: Record<Control, string[]> = {
   a: ["KeyZ", "Space"],
   b: ["KeyX"],
   start: ["Enter"],
-  select: ["Shift"],
+  select: ["ShiftLeft", "ShiftRight"],
 };
 
-const BY_CODE = new Map<string, Control>(
-  (Object.keys(KEYS) as Control[]).flatMap((control) =>
-    KEYS[control].map((code) => [code, control] as const),
-  ),
+const CONTROLS = Object.keys(KEYS) as Control[];
+
+const BITS = Object.fromEntries(
+  CONTROLS.map((control, i) => [control, 1 << i]),
+) as Record<Control, number>;
+
+const BY_CODE = new Map<string, number>(
+  CONTROLS.flatMap((control) => KEYS[control]).map((code, i) => [code, 1 << i]),
+);
+
+const MASKS = CONTROLS.map((control) =>
+  KEYS[control].reduce((mask, code) => mask | BY_CODE.get(code)!, 0),
 );
 
 export class Input {
-  private readonly down = new Set<Control>();
-  private current: ReadonlySet<Control> = new Set();
-  private previous: ReadonlySet<Control> = new Set();
+  private keys = 0;
+  private current = 0;
+  private previous = 0;
 
   init(): void {
     window.addEventListener("keydown", this.onKeyDown);
@@ -40,15 +48,15 @@ export class Input {
   }
 
   held(control: Control): boolean {
-    return this.current.has(control);
+    return (this.current & BITS[control]) !== 0;
   }
 
   pressed(control: Control): boolean {
-    return this.current.has(control) && !this.previous.has(control);
+    return (this.current & ~this.previous & BITS[control]) !== 0;
   }
 
   released(control: Control): boolean {
-    return !this.current.has(control) && this.previous.has(control);
+    return (~this.current & this.previous & BITS[control]) !== 0;
   }
 
   get x(): number {
@@ -60,36 +68,53 @@ export class Input {
   }
 
   poll(): void {
+    let current = 0;
+
+    for (let i = 0; i < MASKS.length; i++) {
+      if (this.keys & MASKS[i]) current |= 1 << i;
+    }
+
     this.previous = this.current;
-    this.current = new Set(this.down);
+    this.current = current;
   }
 
   private onKeyDown = (event: KeyboardEvent): void => {
-    const control = BY_CODE.get(event.code);
-    if (!control) return;
+    if (event.metaKey) return this.onBlur();
+    if (event.ctrlKey || event.altKey || typing(event.target)) return;
+
+    const bit = BY_CODE.get(event.code);
+    if (!bit) return;
 
     event.preventDefault();
 
-    this.down.add(control);
+    this.keys |= bit;
   };
 
   private onKeyUp = (event: KeyboardEvent): void => {
-    const control = BY_CODE.get(event.code);
-    if (!control) return;
+    const bit = BY_CODE.get(event.code);
+    if (!bit) return;
 
-    event.preventDefault();
-
-    this.down.delete(control);
+    this.keys &= ~bit;
   };
 
   private onBlur = (): void => {
-    this.down.clear();
-    this.current = new Set();
-    this.previous = new Set();
+    this.keys = 0;
+    this.current = 0;
+    this.previous = 0;
   };
 
   private onVisibilityChange = (): void => {
     if (!document.hidden) return;
     this.onBlur();
   };
+}
+
+function typing(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.tagName === "SELECT")
+  );
 }
