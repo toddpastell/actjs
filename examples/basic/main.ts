@@ -1,4 +1,4 @@
-import { collide, Game, Label, Scene, Sheet, Sprite, Tilemap } from "actjs";
+import { collide, Game, Label, Scene, Sheet, Sprite, Tilemap } from "jam2d";
 import mouseUrl from "./mouse.png";
 import worldUrl from "./world.png";
 

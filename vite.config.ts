@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   resolve: {
-    alias: { actjs: "/src/index.ts" },
+    alias: { jam2d: "/src/index.ts" },
   },
   server: {
     open: "/examples/basic/",

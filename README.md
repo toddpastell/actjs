@@ -1,4 +1,4 @@
-# actJS
+# Jam2D
 
 A tiny, easy-to-use, dependency-free pixel game engine.
 

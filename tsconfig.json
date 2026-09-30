@@ -22,7 +22,7 @@
 
     /* Examples import the engine by package name */
     "paths": {
-      "actjs": ["./src/index.ts"],
+      "jam2d": ["./src/index.ts"],
     },
   },
   "include": ["src", "examples"],

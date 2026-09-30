@@ -1,8 +1,18 @@
 {
-  "name": "actjs",
-  "version": "0.1.0",
-  "description": "",
-  "keywords": [],
+  "name": "jam2d",
+  "version": "0.0.1",
+  "description": "A tiny, dependency-free pixel game engine for game jams.",
+  "keywords": [
+    "game",
+    "engine",
+    "pixel",
+    "2d",
+    "webgl",
+    "gamejam"
+  ],
+  "homepage": "https://github.com/toddpastell/jam2d#readme",
+  "bugs": "https://github.com/toddpastell/jam2d/issues",
+  "repository": "github:toddpastell/jam2d",
   "license": "MIT",
   "author": "toddpastell",
   "sideEffects": false,
@@ -20,6 +30,7 @@
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
     "dev": "vite",
+    "prepublishOnly": "pnpm build",
     "sort": "sort-package-json",
     "typecheck": "tsc"
   },
